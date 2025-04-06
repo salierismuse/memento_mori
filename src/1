@@ -1,0 +1,39 @@
+use eframe::{egui, epi};
+
+struct MyApp { // probably use a const that user sets
+               // forget what theyre called
+    weeks_left: u32,
+ }
+
+impl Default for MyApp {
+    fn default() -> Self {
+        Self {
+            weeks_left: 3000,
+        }
+    }
+}
+
+impl epi::App for MyApp {
+    fn name(&self) -> &str {
+        "memento mori clock"
+    }
+
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut epi::Frame) {
+        egui::CentralPAnel::default().show(ctx, |ui| {
+            ui.heading("you could leave life right now.");
+            ui.label(format!("weeks left: {}", self.weeks_left));
+        });
+    }
+}
+
+fn main() {
+    let options = eframe::NativeOptions {
+        initial window_size: Some(egui::vec2(300.0, 100.0)),
+        ..Default::default()
+    };
+    eframe::run_native(
+        "memento mori clock",
+        options,
+        Box::new(|_cc| Box::new(MyApp::default())),
+    }
+
