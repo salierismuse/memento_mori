@@ -26,7 +26,6 @@ fn clock(d_year: i32) {
     // unused for now
 }
 
-////////////////////////////////////////////////////////////////////////////////
 
 struct MyApp {
     weeks_left: Arc<Mutex<u32>>,
@@ -40,15 +39,19 @@ fn weeks_remaining(death_date: NaiveDate) -> u32 {
 
 impl MyApp {
     fn new() -> Self {
-        let death_date = NaiveDate::from_ymd_opt(2085, 4, 7).unwrap();
+        let death_date = NaiveDate::from_ymd_opt(2082, 10, 2).unwrap();
         let initial_weeks = weeks_remaining(death_date);
         let weeks_left = Arc::new(Mutex::new(initial_weeks));
         let weeks_left_clone = Arc::clone(&weeks_left);
 
         thread::spawn(move || loop {
             {
-                let mut data = weeks_remaining(death_date);
-                let today = Local::now().date_naive();
+                let new_value = weeks_remaining(death_date);
+
+                let mut lock = weeks_left_clone.lock().unwrap();
+
+                *lock = new_value;
+                
                 
             }
             thread::sleep(Duration::from_secs(1));
@@ -64,7 +67,7 @@ impl eframe::App for MyApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.vertical_centered(|ui| {
-                ui.heading("You could leave life right now.");
+                ui.heading("don't forget.");
                 ui.label(format!("Weeks left: {}", weeks));
             });
         });
@@ -73,7 +76,6 @@ impl eframe::App for MyApp {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 
 fn main() -> Result<(), eframe::Error> {
     let options = NativeOptions {
